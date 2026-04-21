@@ -31,7 +31,7 @@ def get_id_for_board(board_name):
     return None
 
 dict_REV={"VEK385 revA":"vek385","VEK385 revB":"vek385-revb"}
-MACHINE_BSP=["ZCU111","ZCU102","ZCU104","ZCU106","VCK190","VMK180","VRK160","VRK165","ZCU208","VMK180","VPK180","VPK120"]
+MACHINE_BSP=["ZCU111","ZCU102","ZCU104","ZCU106","VCK190","VMK180","VRK160","VRK165","ZCU208","VMK180","VPK180","VPK120" ,"VEK280"]
 print("INFO :DFX manager client load and unload test")
 machine="None"
 with open('/proc/device-tree/model', 'r') as f:
