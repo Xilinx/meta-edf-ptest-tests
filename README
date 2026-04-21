@@ -47,6 +47,6 @@ Check avialble tests
 ptest-runner -l
 Run all avilable tests
 ptest-runner 
-Run selctive tests
+Run selective tests
 ptest-runner test1 test2 
 
