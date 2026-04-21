@@ -1,4 +1,4 @@
-This README file contains information on the contents of the meta-test layer.
+This README file contains information on the contents of the edf-ptest-coverage layer.
 
 Please see the corresponding sections below for details.
 
@@ -18,7 +18,7 @@ Dependencies
 Patches
 =======
 
-Please submit any patches against the meta-test layer to the xxxx mailing list (xxxx@zzzz.org)
+Please submit any patches against the edf-ptest-coverage layer to the xxxx mailing list (xxxx@zzzz.org)
 and cc: the maintainer:
 
 Maintainer: XXX YYYYYY <xxx.yyyyyy@zzzzz.com>
@@ -27,15 +27,26 @@ Table of Contents
 =================
 
   I. Adding the meta-test layer to your build
- II. Misc
+ II.  Build RPM for sanity ptest
+III. Run sanity ptest on Linux
 
-
-I. Adding the meta-test layer to your build
+I. Adding the edf-ptest-coverage layer to your build
 =================================================
+Run 'bitbake-layers add-layer edf-ptest-coverage '
 
-Run 'bitbake-layers add-layer meta-test'
+II. Build RPM for sanity ptest
+=================================================
+bitbake packagegroup-edf-ptest-sanity-coverage
+rpm will be avilable in below path
+PTEST :- $ROOT/build/tmp/deploy/rpm/cortexa72_cortexa53/
+SANITY_TEST :- $ROOT/build/tmp/deploy/rpm/noarch
 
-II. Misc
-========
+III. Run sanity ptest on Linux
+=================================================
+Check avialble tests 
+ptest-runner -l
+Run all avilable tests
+ptest-runner 
+Run selctive tests
+ptest-runner test1 test2 
 
---- replace with specific information about the meta-test layer ---

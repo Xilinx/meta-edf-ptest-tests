@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Running ethernet ptest"
+echo "Running sanity ethernet ptest"
 output=$(python test_ethernet.py)
 echo "$output"
 if echo "$output" | grep -q "FAIL\|Unknown"; then

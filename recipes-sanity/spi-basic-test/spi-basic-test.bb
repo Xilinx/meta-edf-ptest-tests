@@ -1,4 +1,4 @@
-SUMMARY = "Ethernet connectivity test"
+SUMMARY = "Spi read and speed test"
 LICENSE = "CLOSED"
 
 SRC_URI = "file://ptest/spi_test.py \
@@ -16,3 +16,4 @@ do_install_ptest() {
     install -m 0755 ${WORKDIR}/ptest/spi_test.py ${D}${PTEST_PATH}
 }
 
+PACKAGE_ARCH = "all"

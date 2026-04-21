@@ -16,3 +16,4 @@ do_install_ptest() {
     install -m 0755 ${WORKDIR}/ptest/test_ethernet.py ${D}${PTEST_PATH}
 }
 
+PACKAGE_ARCH = "all"

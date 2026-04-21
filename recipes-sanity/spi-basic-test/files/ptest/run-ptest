@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Running spi ptest"
+echo "Running sanity spi ptest"
 output=$(python spi_test.py)
 echo "$output"
 if echo "$output" | grep -q "FAIL\|Unknown"; then
