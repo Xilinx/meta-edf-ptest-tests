@@ -10,6 +10,7 @@ RDEPENDS:${PN} = "\
     dma-basic-test \
     ethernet-connectivity-test  \
     spi-basic-test \
+    gpio-bram-test \
     ptest-runner \
 "
 PACKAGE_ARCH = "all"
