@@ -22,6 +22,11 @@ def setup_mtd_speedtest(dev):
     run_cmd(["modprobe", "mtd_speedtest", f"dev={dev}", "count=1"])
     time.sleep(1)
 
+def teardown(test_module):
+    run_cmd(["rmmod", test_module])
+    time.sleep(1)
+
+
 def setup_mtd_readtest(dev):
     if os.geteuid() != 0:
         raise PermissionError("Must be run as root")
@@ -61,7 +66,10 @@ if __name__ == "__main__":
     for dev in mtd_node:
         print(f"Setting up MTD speedtest for device: mtd{dev}")
         setup_mtd_speedtest(dev)
+        teardown("mtd_speedtest")
         check_result(f"MTD speedtest for device: mtd{dev}")
         print(f"Setting up MTD readtest for device: mtd{dev}")
         setup_mtd_readtest(dev)
         check_result(f"MTD readtest for device: mtd{dev}")
+        teardown("mtd_readtest")
+       
