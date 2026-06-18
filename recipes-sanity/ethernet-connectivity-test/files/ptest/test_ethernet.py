@@ -101,8 +101,6 @@ def main():
     print("=== Ethernet Interface Test ===\n")
     
     # Get default interface
-    
-    #interface = input("Enter interface name (e.g., eth0, enp0s3): ").strip()
     interface = None
     if not interface:
         rc, out, _ = run_command("ip route show default | awk '{print $5}' | head -n 1")

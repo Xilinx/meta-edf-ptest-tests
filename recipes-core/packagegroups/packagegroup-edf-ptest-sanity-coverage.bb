@@ -13,4 +13,4 @@ RDEPENDS:${PN} = "\
     gpio-bram-test \
     ptest-runner \
 "
-PACKAGE_ARCH = "all"
+
