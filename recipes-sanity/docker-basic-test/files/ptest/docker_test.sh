@@ -2,7 +2,7 @@
 
 set -e
 
-VERSION="${1:-25.11}"
+VERSION="${1:-26.06}"
 
 echo "Restarting Docker service..."
 systemctl restart docker
