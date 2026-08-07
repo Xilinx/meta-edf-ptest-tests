@@ -1,0 +1,14 @@
+#!/bin/sh
+
+echo "Running sanity spi ptest"
+output=$(python spi_test.py)
+echo "$output"
+if echo "$output" | grep -q "FAIL\|Unknown"; then
+    exit 1
+        echo "Test failed: Output contains FAIL or Unknown"
+        echo "$output"
+else
+    exit 0
+fi
+
+
