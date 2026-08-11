@@ -1,0 +1,63 @@
+{
+  "status": "success",
+  "device": "/dev/bsg/ufs-bsg0",
+  "version": "3.16",
+  "luns": [
+    {
+      "enabled": true,
+      "bootLunId": 1,
+      "allocUnits": 5120,
+      "memoryType": 0,
+      "writeProtect": 0
+    },
+    {
+      "enabled": true,
+      "bootLunId": 0,
+      "allocUnits": 256,
+      "memoryType": 0,
+      "writeProtect": 0
+    },
+    {
+      "enabled": true,
+      "bootLunId": 0,
+      "allocUnits": 1024,
+      "memoryType": 0,
+      "writeProtect": 0
+    },
+    {
+      "enabled": false,
+      "bootLunId": 0,
+      "allocUnits": 0,
+      "memoryType": 0,
+      "writeProtect": 0
+    },
+    {
+      "enabled": false,
+      "bootLunId": 0,
+      "allocUnits": 0,
+      "memoryType": 0,
+      "writeProtect": 0
+    },
+    {
+      "enabled": false,
+      "bootLunId": 0,
+      "allocUnits": 0,
+      "memoryType": 0,
+      "writeProtect": 0
+    },
+    {
+      "enabled": false,
+      "bootLunId": 0,
+      "allocUnits": 0,
+      "memoryType": 0,
+      "writeProtect": 0
+    },
+    {
+      "enabled": false,
+      "bootLunId": 0,
+      "allocUnits": 0,
+      "memoryType": 0,
+      "writeProtect": 0
+    }
+  ]
+}
