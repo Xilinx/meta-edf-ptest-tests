@@ -7,8 +7,8 @@ RDEPENDS:${PN} = "\
     dma-basic-test \
     ethernet-connectivity-test  \
     spi-basic-test \
-    update-bootbin-test \
-    configure-ufs-test \
+    image-mgmt-image-update-test \
+    image-mgmt-configure-ufs-test \
     ptest-runner \
     ptestlib \
 "

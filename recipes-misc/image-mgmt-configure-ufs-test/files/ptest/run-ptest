@@ -1,8 +1,8 @@
 #!/bin/sh
 
 cd "$(dirname "$0")"
-echo "Running update-bootbin ptest"
-output=$(python3 update_bootbin_test.py)
+echo "Running image-mgmt-configure-ufs ptest"
+output=$(python3 configure_ufs_test.py)
 ret=$?
 
 if [ "$ret" -ne 0 ] || echo "$output" | grep -qE "FAIL|Unknown"; then

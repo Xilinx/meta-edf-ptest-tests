@@ -1,4 +1,4 @@
-SUMMARY = "Configure UFS test"
+SUMMARY = "Image mgmt configure UFS test"
 LICENSE = "CLOSED"
 
 SRC_URI = "file://ptest/configure_ufs_test.py \
