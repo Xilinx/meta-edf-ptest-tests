@@ -120,8 +120,8 @@ def update_boot_bin(IMG_UPDATE, bootbin_path):
     output = IMG_UPDATE.run_cmd(f"image-mgmt upload-boot {bootbin_path}", output_log=True, timeout=120)
     if output and "SUCCESS" in output:
         return True
-    edf_print(f"FAIL: image-mgmt upload-boot did not return SUCCESS\n{output}")
-    return False
+    else:
+        raise Exception(f"FAIL: image-mgmt upload-boot did not return SUCCESS\n{output}")
 
 
 def compare_bootbin_with_ospi(IMG_UPDATE, local_bootbin, mtd_dev):
@@ -133,15 +133,14 @@ def compare_bootbin_with_ospi(IMG_UPDATE, local_bootbin, mtd_dev):
     edf_print(f"boot.bin size         : {bootbin_size} bytes")
     output = IMG_UPDATE.run_cmd(f"head -c {bootbin_size} /dev/{mtd_dev} | sha256sum", output_log=True)
     if not output or not output.strip():
-        edf_print(f"FAIL: Could not read SHA256 from /dev/{mtd_dev}")
-        return False
+        raise Exception(f"FAIL: Could not read SHA256 from /dev/{mtd_dev}")
     ospi_sha = output.strip().split()[0]
     edf_print(f"OSPI /dev/{mtd_dev} SHA256 : {ospi_sha}")
     if local_sha == ospi_sha:
         edf_print("PASS : BOOT.BIN in OSPI is 100% identical to local BOOT.BIN")
         return True
-    edf_print("FAIL: SHA256 mismatch - BOOT.BIN in OSPI differs from local BOOT.BIN")
-    return False
+    else:
+        raise Exception("FAIL: SHA256 mismatch - BOOT.BIN in OSPI differs from local BOOT.BIN")
 
 
 def main():

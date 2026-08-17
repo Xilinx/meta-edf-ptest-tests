@@ -17,8 +17,8 @@ def write_ufs_config(UFS, ufs_config_file):
     output = UFS.run_cmd(f"image-mgmt ufs-config --write {ufs_config_file}", output_log=True, timeout=10)
     if output and "SUCCESS" in output:
         return True
-    edf_print(f"FAIL: image-mgmt ufs-config --write did not return SUCCESS\n{output}")
-    return False
+    else:
+        raise Exception(f"FAIL: image-mgmt ufs-config --write did not return SUCCESS\n{output}")
 
 
 def query_ufs_config(UFS, script_dir):
@@ -27,8 +27,7 @@ def query_ufs_config(UFS, script_dir):
     UFS.run_cmd(f"cd {script_dir}")
     output = UFS.run_cmd("image-mgmt ufs-config --query", output_log=True)
     if not output or "SUCCESS" not in output:
-        edf_print(f"FAIL: image-mgmt ufs-config --query did not return SUCCESS\n{output}")
-        return False
+        raise Exception(f"FAIL: image-mgmt ufs-config --query did not return SUCCESS\n{output}")
     return True
 
 
@@ -38,8 +37,7 @@ def verify_ufs_config(UFS, script_dir, ufs_config_file):
     edf_print(f"Verifying {query_file} against {ufs_config_file}")
     output = UFS.run_cmd(f"diff -Ewa {query_file} {ufs_config_file}", output_log=True)
     if output and output.strip():
-        edf_print(f"FAIL: UFS config mismatch\n{output}")
-        return False
+        raise Exception(f"FAIL: UFS config mismatch\n{output}")
     return True
 
 
