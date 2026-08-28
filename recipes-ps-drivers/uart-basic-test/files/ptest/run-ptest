@@ -1,0 +1,13 @@
+#!/bin/sh
+
+echo "Running sanity uart ptest"
+output=$(python test_uart.py)
+ret=$?
+
+if [ "$ret" -ne 0 ] || echo "$output" | grep -qE "FAIL|Unknown"; then
+    echo "Test failed: non-zero return ($ret) or output contains FAIL/Unknown"
+    echo "$output"
+    exit 1
+else
+    exit 0
+fi
