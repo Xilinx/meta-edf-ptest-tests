@@ -17,4 +17,7 @@ RDEPENDS:${PN} = "\
     uart-basic-test \
     ptest-runner \
     ptestlib \
+    wdt-basic-test \
+    can-basic-test \
+    usb-basic-test \
 "
