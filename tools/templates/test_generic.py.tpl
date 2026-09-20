@@ -5,7 +5,7 @@ import sys
 
 def main():
 
-    TEST = lib.testsetup("${DRIVER}_basic_test")
+    TEST = lib.testsetup("urvf_${DRIVER}_basic_test")
 
     print("=== ${DRIVER_UPPER} Basic Test ===")
 

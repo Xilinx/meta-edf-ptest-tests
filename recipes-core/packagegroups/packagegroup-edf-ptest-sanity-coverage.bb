@@ -4,20 +4,20 @@ LICENSE = "CLOSED"
 inherit packagegroup
 
 RDEPENDS:${PN} = "\
-    dma-basic-test \
-    ethernet-connectivity-test  \
-    spi-basic-test \
-    image-mgmt-image-update-test \
-    image-mgmt-configure-ufs-test \
-    gpio-basic-test \
-    i2c-basic-test \
-    rtc-basic-test \
-    sd-basic-test \
-    spi-jffs2-test \
-    uart-basic-test \
+    urvf-dma-basic-test \
+    urvf-ethernet-connectivity-test  \
+    urvf-spi-basic-test \
+    urvf-image-mgmt-image-update-test \
+    urvf-image-mgmt-configure-ufs-test \
+    urvf-gpio-basic-test \
+    urvf-i2c-basic-test \
+    urvf-rtc-basic-test \
+    urvf-sd-basic-test \
+    urvf-spi-jffs2-test \
+    urvf-uart-basic-test \
     ptest-runner \
     ptestlib \
-    wdt-basic-test \
-    can-basic-test \
-    usb-basic-test \
+    urvf-wdt-basic-test \
+    urvf-can-basic-test \
+    urvf-usb-basic-test \
 "
