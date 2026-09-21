@@ -11,6 +11,7 @@ RDEPENDS:${PN} = "\
     image-mgmt-configure-ufs-test \
     gpio-basic-test \
     i2c-basic-test \
+    urvf-kernel-module-development-test \
     rtc-basic-test \
     sd-basic-test \
     spi-jffs2-test \
