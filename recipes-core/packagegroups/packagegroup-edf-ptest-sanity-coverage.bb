@@ -11,6 +11,7 @@ RDEPENDS:${PN} = "\
     urvf-image-mgmt-configure-ufs-test \
     urvf-gpio-basic-test \
     urvf-i2c-basic-test \
+    urvf-kernel-module-development-test \
     urvf-rtc-basic-test \
     urvf-sd-basic-test \
     urvf-spi-jffs2-test \
