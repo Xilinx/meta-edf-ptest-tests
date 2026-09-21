@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "Running wdt ptest"
+python test_wdt.py
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+exit 0
