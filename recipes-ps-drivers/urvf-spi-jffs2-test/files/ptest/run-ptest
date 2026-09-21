@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "Running sanity jffs2 ptest"
+python test_jffs2.py
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+exit 0

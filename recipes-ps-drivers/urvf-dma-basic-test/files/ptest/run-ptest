@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "dma basic test for iteration 1 per channel"
+python dma_test.py
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+exit 0
