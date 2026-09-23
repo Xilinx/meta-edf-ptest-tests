@@ -30,7 +30,7 @@ def check_hwclock(RTC):
 def read_rtc_time(RTC):
     """Read RTC time"""
 
-    out = RTC.run_cmd("hwclock -r", output_log=True).strip()
+    out = RTC.run_cmd("hwclock -r 2>/dev/null || true", output_log=True).strip()
 
     # Example:
     # 2026-08-11 15:30:10.123456+00:00

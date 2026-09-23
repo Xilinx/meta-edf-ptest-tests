@@ -23,14 +23,14 @@ reset, power, boot-mode, or peripheral-control signals on some boards.
 
 def check_gpio_devices(GPIO):
     """Check whether GPIO character devices exist."""
-    output = GPIO.run_cmd("ls /dev/gpiochip* 2>/dev/null", output_log=True)
+    output = GPIO.run_cmd("ls /dev/gpiochip* 2>/dev/null || true", output_log=True)
     return output.strip() if output else None
 
 
 def check_gpiod_tools(GPIO):
     """Check whether required libgpiod commands are available."""
     output = GPIO.run_cmd(
-        "command -v gpiodetect && command -v gpioinfo && command -v gpioget",
+        "command -v gpiodetect && command -v gpioinfo && command -v gpioget || true",
         output_log=True,
     )
     return bool(output and output.strip())
@@ -38,7 +38,7 @@ def check_gpiod_tools(GPIO):
 
 def detect_gpiochips(GPIO):
     """Dynamically detect all registered GPIO controllers."""
-    output = GPIO.run_cmd("gpiodetect 2>/dev/null", output_log=True)
+    output = GPIO.run_cmd("gpiodetect 2>/dev/null || true", output_log=True)
 
     chips = []
 
@@ -63,7 +63,7 @@ def find_readable_gpio_line(GPIO, chips):
 
     for chip in chips:
 
-        gpioinfo_output = GPIO.run_cmd("gpioinfo 2>/dev/null", output_log=True)
+        gpioinfo_output = GPIO.run_cmd("gpioinfo 2>/dev/null || true", output_log=True)
 
         if not gpioinfo_output:
             continue

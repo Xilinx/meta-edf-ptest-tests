@@ -19,7 +19,7 @@ Tests:
 def get_uart_devices(UART):
     """Detect available UART devices"""
 
-    out = UART.run_cmd("ls /dev/tty* 2>/dev/null", output_log=True)
+    out = UART.run_cmd("ls /dev/tty* 2>/dev/null || true", output_log=True)
 
     if not out:
         return []
@@ -30,7 +30,7 @@ def get_uart_devices(UART):
 def get_console_uart(UART):
     """Detect active console UART"""
 
-    out = UART.run_cmd("cat /proc/consoles", output_log=True)
+    out = UART.run_cmd("cat /proc/consoles 2>/dev/null || true", output_log=True)
 
     if not out:
         return None
@@ -46,7 +46,7 @@ def get_console_uart(UART):
 def check_uart_drivers(UART):
     """Verify UART drivers are registered"""
 
-    out = UART.run_cmd("cat /proc/tty/drivers", output_log=True)
+    out = UART.run_cmd("cat /proc/tty/drivers 2>/dev/null || true", output_log=True)
 
     return bool(out and "serial" in out)
 

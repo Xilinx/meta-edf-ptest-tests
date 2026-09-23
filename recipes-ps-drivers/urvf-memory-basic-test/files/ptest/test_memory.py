@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from ptestlib import lib
-from ptestlib.edf_utiles import clean_dmesg, check_string_in_dmesg, debug_print
+from ptestlib.edf_utiles import check_string_in_dmesg, debug_print
 import re
 import sys
 
@@ -44,7 +44,7 @@ def check_stress_ng(TEST):
 
 def get_total_mem_kb(TEST):
     """Parse MemTotal (kB) out of /proc/meminfo."""
-    output = TEST.run_cmd("cat /proc/meminfo", output_log=True)
+    output = TEST.run_cmd("cat /proc/meminfo 2>/dev/null || true", output_log=True)
     if not output:
         return None
 
@@ -67,7 +67,7 @@ def run_stress_ng(TEST, vm_bytes_mb):
     """
     cmd = (
         f"stress-ng --vm {VM_WORKERS} --vm-bytes {vm_bytes_mb}M "
-        f"--timeout {VM_TIMEOUT_SEC}s --metrics-brief"
+        f"--timeout {VM_TIMEOUT_SEC}s --metrics-brief 2>&1 || true"
     )
     output = TEST.run_cmd(cmd, timeout=VM_TIMEOUT_SEC + 60, output_log=True) or ""
     debug_print(f"[INFO] stress-ng output:\n{output}")
@@ -113,7 +113,7 @@ def main():
     vm_bytes_mb = compute_vm_bytes_mb(total_mem_kb)
 
     # Test 3: stress-ng vm stress run
-    clean_dmesg(TEST.run_cmd)
+    TEST.run_cmd("dmesg -c 2>/dev/null || true", output_log=True)
     try:
         output = run_stress_ng(TEST, vm_bytes_mb)
         if any(marker in output for marker in SUCCESS_MARKERS):

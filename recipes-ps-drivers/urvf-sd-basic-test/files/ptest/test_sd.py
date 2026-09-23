@@ -21,14 +21,16 @@ def get_all_mmc_devices(MMC):
 
 def get_device_type(device, MMC):
     """Read SD or MMC from sysfs"""
-    out = MMC.run_cmd(f"cat /sys/block/{device}/device/type", output_log=True)
+    out = MMC.run_cmd(
+        f"cat /sys/block/{device}/device/type 2>/dev/null || true", output_log=True
+    )
     return out.strip() if out else "UNKNOWN"
 
 
 def raw_block_read(device, MMC):
     """Read 512 bytes directly from block device — hardware level check"""
     out = MMC.run_cmd(
-        f"dd if=/dev/{device} of=/dev/null bs=512 count=1 2>&1", output_log=True
+        f"dd if=/dev/{device} of=/dev/null bs=512 count=1 2>&1 || true", output_log=True
     )
     return bool(out and "records out" in out)
 
@@ -45,7 +47,9 @@ def check_dmesg_errors(device, MMC):
 
 def get_writable_mount(device, MMC):
     """Find best writable mount point — prefers /storage, skips rootfs and efi"""
-    out = MMC.run_cmd(f"lsblk -nrpo MOUNTPOINT /dev/{device}", output_log=True)
+    out = MMC.run_cmd(
+        f"lsblk -nrpo MOUNTPOINT /dev/{device} 2>/dev/null || true", output_log=True
+    )
     if not out:
         return None
 
@@ -59,7 +63,7 @@ def get_writable_mount(device, MMC):
     mounts = sorted(mounts, key=lambda m: m == "/storage", reverse=True)
 
     for mount in mounts:
-        writable = MMC.run_cmd(f"test -w {mount} && echo OK", output_log=True)
+        writable = MMC.run_cmd(f"test -w {mount} && echo OK || true", output_log=True)
         if writable and "OK" in writable:
             return mount
 
@@ -70,8 +74,8 @@ def rw_test(mount_point, MMC):
     """Write, read back, verify content — always cleans up"""
     test_file = f"{mount_point}/emmc_test.txt"
     try:
-        MMC.run_cmd(f"echo EDF_EMMC_TEST > {test_file} && sync")
-        out = MMC.run_cmd(f"cat {test_file}", output_log=True)
+        MMC.run_cmd(f"echo EDF_EMMC_TEST > {test_file} && sync || true")
+        out = MMC.run_cmd(f"cat {test_file} 2>/dev/null || true", output_log=True)
         return bool(out and "EDF_EMMC_TEST" in out)
     finally:
         MMC.run_cmd(f"rm -f {test_file}")
@@ -82,7 +86,7 @@ def perf_test(mount_point, MMC):
     perf_file = f"{mount_point}/perf_test"
     try:
         out = MMC.run_cmd(
-            f"dd if=/dev/zero of={perf_file} bs=1M count=4 oflag=sync 2>&1",
+            f"dd if=/dev/zero of={perf_file} bs=1M count=4 oflag=sync 2>&1 || true",
             output_log=True,
         )
         for line in (out or "").splitlines():
