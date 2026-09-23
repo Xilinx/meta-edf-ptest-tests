@@ -28,7 +28,7 @@ TEST_BIN_USB = "usb_ptest.bin"
 
 
 def check_usb_bus_nodes(USB):
-    output = USB.run_cmd("ls /dev/bus/usb/ 2>/dev/null", output_log=True)
+    output = USB.run_cmd("ls /dev/bus/usb/ 2>/dev/null || true", output_log=True)
     return output.strip() if output else None
 
 
@@ -50,7 +50,7 @@ def check_root_hub(USB):
 
 
 def detect_usb_devices(USB):
-    output = USB.run_cmd("lsusb 2>/dev/null", output_log=True)
+    output = USB.run_cmd("lsusb 2>/dev/null || true", output_log=True)
     devices = []
     if output:
         for line in output.splitlines():
@@ -67,7 +67,7 @@ def detect_usb_storage(USB):
     output = USB.run_cmd(
         "find /dev/disk/by-id/ -type l "
         r"\( -name '*usb*' \) -a ! -iname '*part*' "
-        "2>/dev/null",
+        "2>/dev/null || true",
         output_log=True,
     )
 
@@ -78,7 +78,9 @@ def detect_usb_storage(USB):
         link = link.strip()
         if not link:
             continue
-        resolved = USB.run_cmd(f"readlink -f {link} 2>/dev/null", output_log=True)
+        resolved = USB.run_cmd(
+            f"readlink -f {link} 2>/dev/null || true", output_log=True
+        )
         if resolved:
             resolved = resolved.strip()
             if re.match(r"^/dev/sd[a-z]+$", resolved):
@@ -99,7 +101,7 @@ def prepare_partition(USB, device):
     """Wipe all partitions and create a single fresh partition."""
     USB.run_cmd(
         f"parted -s {device} mklabel gpt "
-        f"mkpart primary 0% {TEST_PARTITION_SIZE} 2>&1",
+        f"mkpart primary 0% {TEST_PARTITION_SIZE} 2>&1 || true",
         output_log=True,
     )
     USB.run_cmd("sync", output_log=True)
@@ -111,17 +113,17 @@ def prepare_partition(USB, device):
 
 def format_partition(USB, partition, fstype):
     if fstype == "vfat":
-        cmd = f"mkfs.vfat {partition} -F 32 2>&1"
+        cmd = f"mkfs.vfat {partition} -F 32 2>&1 || true"
     else:
-        cmd = f"mkfs.{fstype} -F {partition} 2>&1"
+        cmd = f"mkfs.{fstype} -F {partition} 2>&1 || true"
     output = USB.run_cmd(cmd, output_log=True)
     return bool(output and "error" not in output.lower())
 
 
 def mount_partition(USB, partition, fstype):
-    USB.run_cmd(f"mkdir -p {MOUNT_POINT}", output_log=True)
+    USB.run_cmd(f"mkdir -p {MOUNT_POINT} 2>/dev/null || true", output_log=True)
     output = USB.run_cmd(
-        f"mount -t {fstype} {partition} {MOUNT_POINT} 2>&1", output_log=True
+        f"mount -t {fstype} {partition} {MOUNT_POINT} 2>&1 || true", output_log=True
     )
     return not (output and "error" in output.lower())
 
@@ -133,7 +135,7 @@ def unmount_partition(USB):
 
 def get_md5(USB, filepath):
     output = USB.run_cmd(
-        f"md5sum {filepath} 2>/dev/null | awk '{{print $1}}'", output_log=True
+        f"md5sum {filepath} 2>/dev/null | awk '{{print $1}}' || true", output_log=True
     )
     return output.strip() if output else None
 
@@ -153,10 +155,13 @@ def run_filesystem_test(USB, partition, fstype):
     debug_print(f"  Writing {TEST_FILE_KB}KB random data...")
     USB.run_cmd(
         f"dd if=/dev/urandom of={TEST_BIN_HOST} "
-        f"bs=1024 count={TEST_FILE_KB} 2>/dev/null",
+        f"bs=1024 count={TEST_FILE_KB} 2>/dev/null || true",
         output_log=True,
     )
-    USB.run_cmd(f"cp {TEST_BIN_HOST} {MOUNT_POINT}/{TEST_BIN_USB}", output_log=True)
+    USB.run_cmd(
+        f"cp {TEST_BIN_HOST} {MOUNT_POINT}/{TEST_BIN_USB} 2>/dev/null || true",
+        output_log=True,
+    )
     USB.run_cmd("sync", output_log=True)
 
     md5_orig = get_md5(USB, TEST_BIN_HOST)

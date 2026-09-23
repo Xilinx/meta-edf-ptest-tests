@@ -21,15 +21,20 @@ def main():
     debug_print("=== SPI Basic Test ===\n")
 
     run = lib.testsetup("urvf_spi_test")
-    mtd_node = get_spi_node()
-    kernel_verbosity(1)
+
+    try:
+        mtd_node = get_spi_node()
+        kernel_verbosity(1)
+    except Exception as e:
+        debug_print(f"FAIL: Test setup failed: {e}")
+        return 1
 
     if not mtd_node:
         debug_print("FAIL: No MTD nodes found with 'mtd0' or 'user' in the name.")
         return 1
 
     debug_print(f"INFO: Found MTD nodes: {mtd_node}")
-    clean_dmesg(run.run_cmd)
+    run.run_cmd("dmesg -c 2>/dev/null || true", output_log=True)
 
     any_failed = False
 
@@ -56,13 +61,15 @@ def main():
         debug_print(f"INFO: Setting up MTD readtest for device: mtd{dev}")
         try:
             setup_modeprobe(dev, "mtd_readtest", runcmd=run.run_cmd)
-            check_string_in_dmesg(
-                run.run_cmd,
-                success_list=["mtd_readtest: finished"],
-                failure_list=["failed", "error", "ERROR:"],
-            )
-            teardown_modeprobe(run.run_cmd, "mtd_readtest")
-            debug_print(f"PASS: mtd{dev} readtest completed")
+            try:
+                check_string_in_dmesg(
+                    run.run_cmd,
+                    success_list=["mtd_readtest: finished"],
+                    failure_list=["failed", "error", "ERROR:"],
+                )
+                debug_print(f"PASS: mtd{dev} readtest completed")
+            finally:
+                teardown_modeprobe(run.run_cmd, "mtd_readtest")
         except Exception as e:
             debug_print(f"FAIL: mtd_readtest on mtd{dev}: {e}")
             any_failed = True

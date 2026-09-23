@@ -1,16 +1,11 @@
-import subprocess
-import time
 import os
 import signal
-from ptestlib import lib
-from ptestlib.edf_utiles import (
-    write_sysfs,
-    check_string_in_dmesg,
-    clean_dmesg,
-    debug_print,
-    clear_log_file,
-)
+import subprocess
+import sys
 import time
+
+from ptestlib import lib
+from ptestlib.edf_utiles import debug_print, write_sysfs
 
 
 def start_log_capture(log_file):
@@ -26,23 +21,50 @@ def main():
 
     # 1. Verify DMA controller from device tree
     res = run.run_cmd(
-        "find /sys/firmware/devicetree/base/ -maxdepth 1 \\( -name amba* -o -name axi \\)",
+        "find /sys/firmware/devicetree/base/ -maxdepth 1 \\( -name amba* -o -name axi \\) 2>/dev/null || true",
         output_log=True,
     )
-    debug_print(res)
-    clean_dmesg(run.run_cmd)
-    run.run_cmd("ls /sys/class/dma")
-    run.run_cmd("modprobe dmatest")
+    if res and res.strip():
+        debug_print(f"PASS: DMA controller node found: {res.strip()}")
+    else:
+        debug_print("FAIL: No DMA controller node found in device tree")
+        return 1
+
+    run.run_cmd("dmesg -c 2>/dev/null || true", output_log=True)
+
+    res = run.run_cmd("ls /sys/class/dma 2>/dev/null || true", output_log=True)
+    if not res or not res.strip():
+        debug_print("FAIL: /sys/class/dma is empty or missing")
+        return 1
+    debug_print(f"PASS: DMA class entries: {res.strip()}")
+
+    res = run.run_cmd("modprobe dmatest 2>&1 || true", output_log=True)
+    if res and (
+        "error" in res.lower() or "fatal" in res.lower() or "not found" in res.lower()
+    ):
+        debug_print(f"FAIL: modprobe dmatest failed: {res.strip()}")
+        return 1
+    debug_print("PASS: dmatest module loaded")
     base = "/sys/module/dmatest/parameters"
 
     # 4. Configure dmatest
-    write_sysfs(f"{base}/iterations", 10)
-    write_sysfs(f"{base}/threads_per_chan", 1)
-    write_sysfs(f"{base}/channel", "")  # Enable ALL DMA channels
-    write_sysfs(f"{base}/verbose", 1)  # Enable verbose logging
+    try:
+        write_sysfs(f"{base}/iterations", 10)
+        write_sysfs(f"{base}/threads_per_chan", 1)
+        write_sysfs(f"{base}/channel", "")
+        write_sysfs(f"{base}/verbose", 1)
+    except OSError as e:
+        debug_print(f"FAIL: Could not configure dmatest parameters: {e}")
+        return 1
+    debug_print("PASS: dmatest parameters configured")
 
     # 5. Clear previous log
-    clear_log_file(log_file)
+    try:
+        with open(log_file, "w"):
+            pass
+    except OSError as e:
+        debug_print(f"FAIL: Could not clear log file {log_file}: {e}")
+        return 1
 
     # 6. Start kernel log capture
     log_proc = start_log_capture(log_file)
@@ -50,19 +72,35 @@ def main():
     try:
         # 7. Run DMA test
         debug_print("[INFO] Starting DMA test...")
-        write_sysfs(f"{base}/run", 1)
+        try:
+            write_sysfs(f"{base}/run", 1)
+        except OSError as e:
+            debug_print(f"FAIL: Could not start dmatest: {e}")
+            return 1
         time.sleep(60)
     finally:
         # Stop log capture
         os.killpg(os.getpgid(log_proc.pid), signal.SIGTERM)
 
-    check_string_in_dmesg(
-        run.run_cmd,
-        success_list=["test passed"],
-        failure_list=["test failed", "error", "ERROR:"],
-    )
-    debug_print("[DONE] DMA test completed")
+    # 8. Check dmesg for pass/fail
+    dmesg_out = run.run_cmd("dmesg --color=never 2>/dev/null || true", output_log=True)
+
+    if not dmesg_out or not dmesg_out.strip():
+        debug_print("FAIL: No dmesg output captured")
+        return 1
+
+    for s in ["test failed", "error", "ERROR:"]:
+        if s in dmesg_out:
+            debug_print(f"FAIL: Found failure string '{s}' in dmesg output")
+            return 1
+
+    if "test passed" in dmesg_out:
+        debug_print("PASS: DMA test passed")
+        return 0
+
+    debug_print("FAIL: 'test passed' not found in dmesg output")
+    return 1
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

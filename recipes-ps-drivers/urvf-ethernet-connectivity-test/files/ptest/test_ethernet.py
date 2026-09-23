@@ -12,19 +12,25 @@ Tests ethernet connectivity, link status, and basic network operations
 
 def check_interface_exists(interface, ETH):
     """Check if network interface exists"""
-    output = ETH.run_cmd(f"ip link show {interface} 2>/dev/null", output_log=True)
+    output = ETH.run_cmd(
+        f"ip link show {interface} 2>/dev/null || true", output_log=True
+    )
     return bool(output and interface in output)
 
 
 def check_interface_up(interface, ETH):
     """Check if interface is up"""
-    output = ETH.run_cmd(f"ip link show {interface} 2>/dev/null", output_log=True)
+    output = ETH.run_cmd(
+        f"ip link show {interface} 2>/dev/null || true", output_log=True
+    )
     return bool(output and "UP" in output)
 
 
 def check_ip_address(interface, ETH):
     """Get IP address of interface; returns address string or None"""
-    output = ETH.run_cmd(f"ip addr show {interface} 2>/dev/null", output_log=True)
+    output = ETH.run_cmd(
+        f"ip addr show {interface} 2>/dev/null || true", output_log=True
+    )
     if not output:
         return None
     for line in output.splitlines():
@@ -36,14 +42,16 @@ def check_ip_address(interface, ETH):
 
 def check_link_speed(interface, ETH):
     """Check ethernet link speed"""
-    op = ETH.run_cmd(f"ethtool {interface} 2>/dev/null | grep Speed", output_log=True)
+    op = ETH.run_cmd(
+        f"ethtool {interface} 2>/dev/null | grep Speed || true", output_log=True
+    )
     return op.strip() if op else "Speed information not available"
 
 
 def get_default_gateway(ETH):
     """Get default gateway from system routing table"""
     stdout = ETH.run_cmd(
-        "ip route | grep default | awk '{print $3}' | head -1", output_log=True
+        "ip route | grep default | awk '{print $3}' | head -1 || true", output_log=True
     )
     if stdout and stdout.strip():
         return stdout.strip()
@@ -56,8 +64,8 @@ def ping_test(ETH, host=None, count=4):
         host = get_default_gateway(ETH)
         if not host:
             return False
-    ETH.run_cmd(f"ping -c {count} -W 2 {host}")
-    return True
+    output = ETH.run_cmd(f"ping -c {count} -W 2 {host} 2>&1 || true", output_log=True)
+    return bool(output and "0% packet loss" in output)
 
 
 def ping_flood_test(ETH, host=None):
@@ -67,9 +75,13 @@ def ping_flood_test(ETH, host=None):
         if not host:
             return False
     debug_print(f"INFO: Starting ping flood to {host}...")
-    ETH.run_cmd(f"timeout 200 ping -f {host} -i 5 -c 5", timeout=200)
+    output = ETH.run_cmd(
+        f"timeout 200 ping -f {host} -i 5 -c 5 2>&1 || true",
+        timeout=200,
+        output_log=True,
+    )
     debug_print("INFO: Ping flood completed.")
-    return True
+    return bool(output and "0% packet loss" in output)
 
 
 def main():
@@ -80,7 +92,8 @@ def main():
     interface = None
     if not interface:
         out = ETH.run_cmd(
-            "ip route show default | awk '{print $5}' | head -n 1", output_log=True
+            "ip route show default | awk '{print $5}' | head -n 1 || true",
+            output_log=True,
         )
         if out and out.strip():
             interface = out.strip()
@@ -93,7 +106,8 @@ def main():
 
         if not interface:
             out = ETH.run_cmd(
-                "ls /sys/class/net | grep -E '^eth|^en' | grep -v '^lo$' | head -n 1"
+                "ls /sys/class/net | grep -E '^eth|^en' | grep -v '^lo$' | head -n 1 || true",
+                output_log=True,
             )
             if out and out.strip():
                 interface = out.strip()

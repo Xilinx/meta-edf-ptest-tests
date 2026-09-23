@@ -18,7 +18,9 @@ def check_i2c_tools(I2C):
 
 def get_i2c_buses(I2C):
 
-    out = I2C.run_cmd("i2cdetect -l | awk '{print $1}'", output_log=True)
+    out = I2C.run_cmd(
+        "i2cdetect -l 2>/dev/null | awk '{print $1}' || true", output_log=True
+    )
 
     buses = []
 
@@ -32,14 +34,14 @@ def get_i2c_buses(I2C):
 
 def check_i2c_devices(I2C):
 
-    out = I2C.run_cmd("ls /dev/i2c-* 2>/dev/null", output_log=True)
+    out = I2C.run_cmd("ls /dev/i2c-* 2>/dev/null || true", output_log=True)
 
     return bool(out and out.strip())
 
 
 def scan_bus(I2C, bus):
 
-    out = I2C.run_cmd(f"i2cdetect -y {bus}", output_log=True)
+    out = I2C.run_cmd(f"i2cdetect -y {bus} 2>/dev/null || true", output_log=True)
 
     return out
 

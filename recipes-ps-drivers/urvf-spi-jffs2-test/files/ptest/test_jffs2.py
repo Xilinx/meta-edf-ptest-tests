@@ -10,7 +10,9 @@ SPI NOR Flash + JFFS2 Validation Test
 
 
 def get_md5(SPI, path):
-    out = SPI.run_cmd(f"md5sum {path} | awk '{{print $1}}'", output_log=True)
+    out = SPI.run_cmd(
+        f"md5sum {path} 2>/dev/null | awk '{{print $1}}' || true", output_log=True
+    )
     return out.strip() if out else None
 
 
@@ -85,7 +87,7 @@ def main():
         try:
             if mtd_block:
                 SPI.run_cmd(f"umount {mtd_block} || true")
-            SPI.run_cmd(f"rm -rf {mount_dir}")
+            SPI.run_cmd(f"rm -rf {mount_dir} 2>/dev/null || true")
             SPI.run_cmd("rm -f /tmp/jffs2.bin")
         except Exception:
             pass

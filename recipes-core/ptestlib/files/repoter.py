@@ -16,10 +16,12 @@ Generate a simple HTML test report from:
 """
 
 
-
 VALID_STATUSES = {"pass", "fail"}
 
-def generate_html_report(status: str, logfile_path: str, test_name: str, output_path: str | None = None) -> Path:
+
+def generate_html_report(
+    status: str, logfile_path: str, test_name: str, output_path: str | None = None
+) -> Path:
     status_normalized = status.strip().lower()
     if status_normalized not in VALID_STATUSES:
         raise ValueError("status must be 'pass' or 'fail'")
@@ -65,7 +67,11 @@ def generate_html_report(status: str, logfile_path: str, test_name: str, output_
             part = part.strip()
             if not part:
                 continue
-            m = re.match(r"(?P<generated>.+?)\s*-\s*(?P<status>PASS|FAIL)\s*\((?P<log_name>.+)\)\s*$", part, re.I)
+            m = re.match(
+                r"(?P<generated>.+?)\s*-\s*(?P<status>PASS|FAIL)\s*\((?P<log_name>.+)\)\s*$",
+                part,
+                re.I,
+            )
             if m:
                 result.append(
                     {
@@ -91,7 +97,9 @@ def generate_html_report(status: str, logfile_path: str, test_name: str, output_
                     last_pass_log = item.get("log_text", "")
                     break
 
-        last_pass_line = f"<pre>{html.escape(last_pass_log)}</pre>" if last_pass_log else "-"
+        last_pass_line = (
+            f"<pre>{html.escape(last_pass_log)}</pre>" if last_pass_log else "-"
+        )
 
         return f"""
             <details class="log-pop">
@@ -211,7 +219,9 @@ def generate_html_report(status: str, logfile_path: str, test_name: str, output_
 </script>
 """
         if 'id="statusPieChart"' not in doc:
-            doc = doc.replace("<h1>Test Report</h1>", "<h1>Test Report</h1>" + chart_block, 1)
+            doc = doc.replace(
+                "<h1>Test Report</h1>", "<h1>Test Report</h1>" + chart_block, 1
+            )
         if "drawStatusPieChart" not in doc:
             doc = doc.replace("</body>", chart_script + "\n</body>", 1)
         return doc
@@ -232,15 +242,23 @@ def generate_html_report(status: str, logfile_path: str, test_name: str, output_
             existing_history_raw = html.unescape(existing.group("hist"))
             history_items = parse_history(existing_history_raw)
 
-            prev_status = re.search(r'<td class="status"[^>]*>([^<]+)</td>', existing_row)
-            prev_generated = re.search(r'<td class="generated">([^<]+)</td>', existing_row)
+            prev_status = re.search(
+                r'<td class="status"[^>]*>([^<]+)</td>', existing_row
+            )
+            prev_generated = re.search(
+                r'<td class="generated">([^<]+)</td>', existing_row
+            )
             prev_current_log = re.search(r'data-current-log="([^"]*)"', existing_row)
 
             if prev_status and prev_generated:
                 prev_record = {
                     "generated": prev_generated.group(1),
                     "status": prev_status.group(1).strip().lower(),
-                    "log_text": html.unescape(prev_current_log.group(1)) if prev_current_log else "",
+                    "log_text": (
+                        html.unescape(prev_current_log.group(1))
+                        if prev_current_log
+                        else ""
+                    ),
                 }
 
                 if not history_items or history_items[0] != prev_record:
@@ -361,9 +379,9 @@ def generate_html_report(status: str, logfile_path: str, test_name: str, output_
     ctx.fill();
 
     legend.innerHTML = `
-      <div><span class="dot pass"></span>PASS: ${passCount}</div>
-      <div><span class="dot fail"></span>FAIL: ${failCount}</div>
-      <div><strong>Total: ${total}</strong></div>
+      <div><span class="dot pass"></span>PASS: ${{passCount}}</div>
+      <div><span class="dot fail"></span>FAIL: ${{failCount}}</div>
+      <div><strong>Total: ${{total}}</strong></div>
     `;
   }}
 
@@ -378,21 +396,27 @@ def generate_html_report(status: str, logfile_path: str, test_name: str, output_
 </html>
 """
 
-    updated_html = re.sub(rf"\s*{re.escape(marker)}\s*", f"\n        {marker}\n", updated_html, count=1)
+    updated_html = re.sub(
+        rf"\s*{re.escape(marker)}\s*", f"\n        {marker}\n", updated_html, count=1
+    )
     updated_html = ensure_pie_chart_section(updated_html)
     out_path.write_text(updated_html, encoding="utf-8")
     return out_path
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate HTML report from test status, log file, and test name.")
+    parser = argparse.ArgumentParser(
+        description="Generate HTML report from test status, log file, and test name."
+    )
     parser.add_argument("status", help="Test status: pass or fail")
     parser.add_argument("logfile", help="Path to log file")
     parser.add_argument("test_name", help="Test name")
     parser.add_argument("-o", "--output", help="Output HTML file path (optional)")
     args = parser.parse_args()
 
-    report_path = generate_html_report(args.status, args.logfile, args.test_name, args.output)
+    report_path = generate_html_report(
+        args.status, args.logfile, args.test_name, args.output
+    )
     print(f"Report generated: {report_path.resolve()}")
 
 
