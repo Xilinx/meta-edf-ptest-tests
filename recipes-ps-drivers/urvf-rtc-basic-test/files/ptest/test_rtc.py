@@ -20,11 +20,8 @@ Basic RTC Test
 def check_hwclock(RTC):
     """Check hwclock availability"""
 
-    try:
-        RTC.run_cmd("which hwclock")
-        return True
-    except Exception:
-        return False
+    out = RTC.run_cmd("which hwclock 2>/dev/null || true", output_log=True)
+    return bool(out and out.strip())
 
 
 def read_rtc_time(RTC):

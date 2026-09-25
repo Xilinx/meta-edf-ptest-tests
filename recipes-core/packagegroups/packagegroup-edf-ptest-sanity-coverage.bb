@@ -22,4 +22,5 @@ RDEPENDS:${PN} = "\
     urvf-can-basic-test \
     urvf-usb-basic-test \
     urvf-memory-basic-test \
+    urvf-pl-gpio-test \
 "

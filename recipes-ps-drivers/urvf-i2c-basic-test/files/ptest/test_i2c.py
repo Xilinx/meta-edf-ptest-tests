@@ -6,14 +6,11 @@ import sys
 
 
 def check_i2c_tools(I2C):
-    try:
-        I2C.run_cmd(
-            "which i2cdetect && which i2cdump && which i2cget && which i2cset",
-            output_log=True,
-        )
-        return True
-    except Exception:
-        return False
+    out = I2C.run_cmd(
+        "which i2cdetect && which i2cdump && which i2cget && which i2cset 2>/dev/null || true",
+        output_log=True,
+    )
+    return bool(out and out.strip())
 
 
 def get_i2c_buses(I2C):

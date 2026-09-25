@@ -4,8 +4,11 @@ LICENSE = "CLOSED"
 SRC_URI += "file://lib.py"
 SRC_URI += "file://logger.py"
 SRC_URI += "file://edf_utiles.py"
+SRC_URI += "file://repoter.py"
 SRC_URI += "file://pexpect"
 SRC_URI += "file://ptyprocess"
+
+S = "${UNPACKDIR}"
 
 inherit python3native
 
@@ -14,6 +17,9 @@ do_install() {
     install -m 0644 ${UNPACKDIR}/lib.py ${D}${PYTHON_SITEPACKAGES_DIR}/ptestlib/
     install -m 0644 ${UNPACKDIR}/edf_utiles.py ${D}${PYTHON_SITEPACKAGES_DIR}/ptestlib/
     install -m 0644 ${UNPACKDIR}/logger.py ${D}${PYTHON_SITEPACKAGES_DIR}/ptestlib/
+    install -d ${D}${bindir}
+    install -m 0755 ${UNPACKDIR}/repoter.py ${D}${bindir}/repoter.py
+    sed -i 's/\r//' ${D}${bindir}/repoter.py
 }
 
 do_install:append() {
@@ -28,4 +34,5 @@ FILES:${PN} += " \
 ${PYTHON_SITEPACKAGES_DIR}/ptestlib \
 ${PYTHON_SITEPACKAGES_DIR}/pexpect \
 ${PYTHON_SITEPACKAGES_DIR}/ptyprocess \
+${bindir}/repoter.py \
 "
