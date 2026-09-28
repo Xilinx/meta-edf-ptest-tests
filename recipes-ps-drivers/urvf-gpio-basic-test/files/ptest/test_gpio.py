@@ -81,16 +81,12 @@ def find_readable_gpio_line(GPIO, chips):
 
         for line in lines:
 
-            try:
-                value = GPIO.run_cmd(
-                    f"gpioget -c {chip} {line} 2>/dev/null", output_log=True
-                )
+            value = GPIO.run_cmd(
+                f"gpioget -c {chip} {line} 2>/dev/null", output_log=True
+            )
 
-                if value and value.strip():
-                    return chip, line, value.strip()
-
-            except Exception:
-                continue
+            if value and value.strip():
+                return chip, line, value.strip()
 
     return None, None, None
 

@@ -1,11 +1,3 @@
-import argparse
-import html
-from datetime import datetime
-from pathlib import Path
-import re
-from uuid import uuid4
-import json
-
 #!/usr/bin/env python3
 """
 Generate a simple HTML test report from:
@@ -14,6 +6,14 @@ Generate a simple HTML test report from:
 - test name
 -example run :- python repoter.py PASS /tmp/test_logs/ethernet_connectivity_test_1773603611.log ethernet_connectivity_tes
 """
+
+import argparse
+import html
+from datetime import datetime
+from pathlib import Path
+import re
+from uuid import uuid4
+import json
 
 
 VALID_STATUSES = {"pass", "fail"}
