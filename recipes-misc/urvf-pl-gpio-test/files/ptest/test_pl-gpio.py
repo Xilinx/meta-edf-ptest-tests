@@ -101,7 +101,7 @@ def get_axi_bram_ctrl_addrs(GPIO):
     if not out:
         return results
     for entry in out.split():
-        m = re.match(r"(axi_bram_ctrl_\d+)@([0-9a-fA-F]+)", entry)
+        m = re.match(r"(axi[-_]bram[-_]ctrl[-_]\d+)@([0-9a-fA-F]+)", entry)
         if m:
             results[m.group(1)] = int(m.group(2), 16)
     return results

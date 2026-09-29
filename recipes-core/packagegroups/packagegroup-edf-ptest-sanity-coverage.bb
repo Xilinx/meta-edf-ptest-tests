@@ -23,4 +23,5 @@ RDEPENDS:${PN} = "\
     urvf-usb-basic-test \
     urvf-memory-basic-test \
     urvf-pl-gpio-test \
+    urvf-docker-basic-test \
 "
