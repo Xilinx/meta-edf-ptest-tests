@@ -4,7 +4,7 @@ Generate a simple HTML test report from:
 - status (pass/fail)
 - logfile path
 - test name
--example run :- python repoter.py PASS /tmp/test_logs/ethernet_connectivity_test_1773603611.log ethernet_connectivity_tes
+-example run :- python urvf_reporter.py PASS /tmp/test_logs/ethernet_connectivity_test_1773603611.log ethernet_connectivity_test
 """
 
 import argparse

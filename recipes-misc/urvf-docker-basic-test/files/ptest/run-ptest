@@ -1,0 +1,15 @@
+#!/bin/sh
+
+CURRENT_TS=$(date +%s)
+VALID_FROM=$(date -d "2026-11-01 00:00:00" +%s)
+VALID_TO=$(date -d "2026-11-29 00:00:00" +%s)
+if [ "$CURRENT_TS" -lt "$VALID_FROM" ] || [ "$CURRENT_TS" -gt "$VALID_TO" ]; then
+    date -s '2026-11-20 00:00:00'
+    hwclock -w
+fi
+
+python3 test_docker-basic.py
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+exit 0
