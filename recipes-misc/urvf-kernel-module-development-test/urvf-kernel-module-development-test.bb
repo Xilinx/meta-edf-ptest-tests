@@ -18,6 +18,5 @@ do_install_ptest() {
     install -m 0755 ${UNPACKDIR}/ptest/test_kernel_module_development.py ${D}${PTEST_PATH}
 }
 
-RDEPENDS:${PN}-ptest = "ptestlib kernel-module-hdmi21-xfmc"
+RDEPENDS:${PN} += "kernel-module-hdmi21-xfmc"
 
-PACKAGE_ARCH = "all"

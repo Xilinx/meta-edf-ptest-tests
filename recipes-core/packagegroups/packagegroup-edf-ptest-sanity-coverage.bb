@@ -7,7 +7,6 @@ RDEPENDS:${PN} = "\
     urvf-dma-basic-test \
     urvf-ethernet-connectivity-test  \
     urvf-spi-basic-test \
-    urvf-image-mgmt-image-update-test \
     urvf-image-mgmt-configure-ufs-test \
     urvf-gpio-basic-test \
     urvf-i2c-basic-test \

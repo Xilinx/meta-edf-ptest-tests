@@ -29,21 +29,23 @@ class testsetup:
         self.log_folder = os.environ.get("LOG_FOLDER", "/tmp/test_logs")
         self.report_folder = os.environ.get("REPORT_FOLDER", "/tmp/test_reports")
         self.report_generator = os.environ.get("REPORT_GENERATOR", True)
-        self.debug_prints = os.environ.get("debug", None)
+        self.debug = os.environ.get("debug", None)
         self.log_file = f"{self.log_folder}/{self.test_name}_{int(time.time())}.log"
         os.makedirs(self.log_folder, exist_ok=True)
         os.makedirs(self.report_folder, exist_ok=True)
         self.logger = setup_logger(
             log_dirname=self.log_folder, log_filename=self.log_file
         )
-        self.runner.logfile = logging.getLogger().handlers[0].stream
+        if self.debug:
+            self.runner.logfile_read = sys.stdout
+            self.runner.logfile = logging.getLogger().handlers[0].stream
+        else:
+            self.runner.logfile = logging.getLogger().handlers[0].stream
         if self.check_non_zero:
             self.runner.sendline(
                 "check_nzero_exit() { ret=$? ; if [ $ret -ne 0 ]; then echo testedf_returncode=$ret; fi ;}"
             )
             self.runner.expect(self.prompt, timeout=30)
-        if self.debug_prints:
-            self.logger.out_h.stream
 
     def run_cmd(self, cmd, timeout=30, expected_list=None, output_log=None):
         output_runcmd = ""

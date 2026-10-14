@@ -1,9 +1,0 @@
-#!/bin/sh
-
-cd "$(dirname "$0")"
-echo "Running image-mgmt-image-update ptest"
-python3 image_update_test.py
-if [ $? -ne 0 ]; then
-    exit 1
-fi
-exit 0

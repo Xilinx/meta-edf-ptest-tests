@@ -5,8 +5,6 @@ SRC_URI += "file://lib.py"
 SRC_URI += "file://logger.py"
 SRC_URI += "file://edf_utiles.py"
 SRC_URI += "file://urvf_reporter.py"
-SRC_URI += "file://pexpect"
-SRC_URI += "file://ptyprocess"
 
 S = "${UNPACKDIR}"
 
@@ -23,17 +21,12 @@ do_install() {
     sed -i 's/\r//' ${D}${bindir}/urvf_reporter.py
 }
 
-do_install:append() {
-install -d ${D}${PYTHON_SITEPACKAGES_DIR}/pexpect
-cp -r ${UNPACKDIR}/pexpect ${D}${PYTHON_SITEPACKAGES_DIR}
-install -d ${D}${PYTHON_SITEPACKAGES_DIR}/ptyprocess
-cp -r ${UNPACKDIR}/ptyprocess ${D}${PYTHON_SITEPACKAGES_DIR}/
-
-}
 
 FILES:${PN} += " \
 ${PYTHON_SITEPACKAGES_DIR}/ptestlib \
-${PYTHON_SITEPACKAGES_DIR}/pexpect \
-${PYTHON_SITEPACKAGES_DIR}/ptyprocess \
 ${bindir}/urvf_reporter.py \
 "
+
+RDEPENDS:${PN} += "python3-pexpect"
+
+PACKAGE_ARCH = "all"

@@ -18,6 +18,4 @@ do_install_ptest() {
     install -m 0644 ${UNPACKDIR}/ptest/ufs_config.json ${D}${PTEST_PATH}
 }
 
-RDEPENDS:${PN}-ptest = "ptestlib"
-
 PACKAGE_ARCH = "all"
