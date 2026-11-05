@@ -1,9 +1,0 @@
-#!/bin/sh
-
-cd "$(dirname "$0")"
-echo "Running kernel-module-development ptest"
-python3 test_kernel_module_development.py
-if [ $? -ne 0 ]; then
-    exit 1
-fi
-exit 0

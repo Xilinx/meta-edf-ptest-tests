@@ -1,5 +1,6 @@
-SUMMARY = "EDF ptest sanity coverage package group"
-LICENSE = "CLOSED"
+SUMMARY = "EDF sanity test suite and runtime dependencies"
+LICENSE = "MIT"
+LIC_FILES_CHKSUM = "file://${THISDIR}/../../COPYING.MIT;md5=79817cdd63c7083c1b1113e0d71292ed"
 
 inherit packagegroup
 

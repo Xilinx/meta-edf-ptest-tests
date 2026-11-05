@@ -1,4 +1,4 @@
-SUMMARY = "HDMI 2.1 XFMC out-of-tree kernel module"
+SUMMARY = "HDMI 2.1 XFMC kernel module for development validation"
 DESCRIPTION = "Out-of-tree kernel module build used to validate the kernel module \
                development flow for HDMI 2.1 FMC hardware."
 LICENSE = "GPL-2.0-only"

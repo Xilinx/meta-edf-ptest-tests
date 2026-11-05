@@ -1,8 +1,0 @@
-#!/bin/sh
-
-echo "Running sanity rtc ptest"
-python test_rtc.py
-if [ $? -ne 0 ]; then
-    exit 1
-fi
-exit 0

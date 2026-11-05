@@ -1,8 +1,0 @@
-#!/bin/sh
-
-echo "Running pl-gpio ptest"
-python3 test_pl-gpio.py
-if [ $? -ne 0 ]; then
-    exit 1
-fi
-exit 0

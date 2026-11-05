@@ -1,52 +1,123 @@
-This README file contains information on the contents of the edf-ptest-coverage layer.
+meta-edf-ptest
+=============
 
-Please see the corresponding sections below for details.
+Yocto/OpenEmbedded layer providing EDF hardware and system sanity tests through
+ptest. It includes a sanity-test package group, shared Python utilities and
+HTML reporting in ptestlib, and a generator for new test recipes.
 
-Dependencies
-============
+Dependencies and compatibility
+==============================
 
-  URI: <first dependency>
-  branch: <branch name>
+The layer declares a dependency on OpenEmbedded Core (core) and compatibility
+with the wrynose release series in conf/layer.conf. Its BitBake collection name
+is edf-ptest-coverage.
 
-  URI: <second dependency>
-  branch: <branch name>
+Use a configured Yocto build environment for your target board. Individual tests
+also require the corresponding hardware, kernel drivers, and runtime tools.
 
-  .
-  .
-  .
+Adding the layer and enabling ptest
+==================================
 
-Patches
-=======
+From an initialized build environment, add this checkout:
 
-Please submit any patches against the edf-ptest-coverage layer to the xxxx mailing list (xxxx@zzzz.org)
-and cc: the maintainer:
+    bitbake-layers add-layer /path/to/meta-edf-ptest
 
-Maintainer: XXX YYYYYY <xxx.yyyyyy@zzzzz.com>
 
-Table of Contents
-=================
+Building packages and images
+===========================
 
-  I. Adding the meta-test layer to your build
- II.  Build RPM for sanity ptest
-III. Run sanity ptest on Linux
+Select one of the following machines in your configured Yocto build environment:
 
-I. Adding the edf-ptest-coverage layer to your build
-=================================================
-Run 'bitbake-layers add-layer edf-ptest-coverage '
+* amd-cortexa53-common
+* amd-cortexa53-mali-common
+* amd-cortexa72-common
+* amd-cortexa78-common
+* amd-cortexa78-mali-common
 
-II. Build RPM for sanity ptest
-=================================================
-bitbake packagegroup-edf-ptest-sanity-coverage
-rpm will be avilable in below path
-PTEST :- $ROOT/build/tmp/deploy/rpm/cortexa72_cortexa53/
-SANITY_TEST :- $ROOT/build/tmp/deploy/rpm/noarch
+Build the sanity-test package group and its dependencies with MACHINE set to
+your selected machine. For example:
 
-III. Run sanity ptest on Linux
-=================================================
-Check avialble tests 
-ptest-runner -l
-Run all avilable tests
-ptest-runner 
-Run selective tests
-ptest-runner test1 test2 
+    MACHINE=amd-cortexa78-mali-common bitbake packagegroup-edf-ptest-sanity-coverage
 
+Build your target image after adding the configuration above:
+
+    MACHINE=amd-cortexa78-mali-common bitbake <image-recipe>
+
+When RPM packaging is enabled, packages are deployed under
+${TMPDIR}/deploy/rpm/<package-architecture>/. Architecture directories depend on
+build configuration; test recipes and ptestlib currently use the all package
+architecture. Other package formats use their corresponding deploy directories.
+Building the package group alone does not create a target image.
+The package group installs the test packages, ptest-runner, and ptestlib.
+The ptest-pkgs image feature includes the associated test payload packages.
+
+Available sanity tests
+======================
+
+The package group includes tests for:
+
+* CAN, DMA, Ethernet connectivity, GPIO, and I2C
+* Memory, RTC, SD, SPI, SPI JFFS2, UART, USB, and watchdog
+* Docker, UFS configuration, kernel module development, and PL GPIO
+
+The authoritative package list is in
+recipes-core/packagegroups/packagegroup-edf-ptest-sanity-coverage.bb.
+
+Running tests on the target
+===========================
+
+List installed ptests:
+
+    ptest-runner -l
+
+Run all installed ptests:
+
+    ptest-runner
+
+Run selected tests using names from the listing:
+
+    ptest-runner urvf-gpio-basic-test urvf-rtc-basic-test
+
+Run hardware tests with the privileges and board setup required by their test
+scripts. Review scripts before running them: some modify device state or
+exercise storage and watchdogs.
+
+Tests using ptestlib write logs to /tmp/test_logs and reports to
+/tmp/test_reports by default. Override these directories before running tests:
+
+    export LOG_FOLDER=/path/to/test_logs
+    export REPORT_FOLDER=/path/to/test_reports
+
+Generate an HTML report from an existing log:
+
+    urvf_reporter.py pass /path/to/test.log test_name -o /path/to/report.html
+
+Use pass or fail for the status argument.
+
+Adding a test
+=============
+
+Run the generator from the root of this checkout, using a new test name:
+
+    python3 tools/generate_ptest.py example-basic recipes-bsp
+
+This creates recipes-bsp/urvf-example-basic-test/ with a BitBake recipe,
+files/ptest/run-ptest, and files/ptest/test_example-basic.py. It also adds
+urvf-example-basic-test to the sanity package group.
+
+The generated Python test is a placeholder that reports SKIP and exits
+successfully. Implement the test logic, add required runtime dependencies to
+the recipe, and verify it on the intended target. The generator overwrites files
+for an existing test name, so use a new name when scaffolding a test.
+
+Templates are maintained in tools/templates/. Shared runtime helpers and the
+report generator are in recipes-core/ptestlib/files/.
+
+Licensing
+=========
+
+Layer scripts and shared Python utilities use the MIT license in COPYING.MIT.
+Each shell and Python script carries an SPDX identifier, copyright notice, and
+the full MIT license text. MIT recipes checksum a local script's license header;
+the package group checksums the layer's COPYING.MIT file. The generator templates
+include the same headers and checksum metadata for new tests.

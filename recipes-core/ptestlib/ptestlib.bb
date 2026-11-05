@@ -1,5 +1,6 @@
-SUMMARY = "EDF ptest sanity coverage package group"
-LICENSE = "CLOSED"
+SUMMARY = "Shared Python utilities and reporting for EDF ptests"
+LICENSE = "MIT"
+LIC_FILES_CHKSUM = "file://lib.py;beginline=1;endline=19;md5=e8f4b2dfa613d86e9d3e1acda2d66ee4"
 
 SRC_URI += "file://lib.py"
 SRC_URI += "file://logger.py"
