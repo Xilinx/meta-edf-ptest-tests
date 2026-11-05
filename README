@@ -1,9 +1,9 @@
-meta-edf-ptest
-=============
+meta-edf-ptest-tests
+===================
 
 Yocto/OpenEmbedded layer providing EDF hardware and system sanity tests through
 ptest. It includes a sanity-test package group, shared Python utilities and
-HTML reporting in ptestlib, and a generator for new test recipes.
+HTML reporting in ptestlib.
 
 Dependencies and compatibility
 ==============================
@@ -20,7 +20,7 @@ Adding the layer and enabling ptest
 
 From an initialized build environment, add this checkout:
 
-    bitbake-layers add-layer /path/to/meta-edf-ptest
+    bitbake-layers add-layer /path/to/meta-edf-ptest-tests
 
 
 Building packages and images
