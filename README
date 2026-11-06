@@ -97,21 +97,26 @@ Use pass or fail for the status argument.
 Adding a test
 =============
 
-Run the generator from the root of this checkout, using a new test name:
+Use an existing test, such as recipes-bsp/urvf-gpio-basic-test/, as a reference
+and create a new directory under recipes-bsp/ or recipes-support/:
 
-    python3 tools/generate_ptest.py example-basic recipes-bsp
+    urvf-example-basic-test/
+        urvf-example-basic-test.bb
+        files/ptest/run-ptest
+        files/ptest/test_example_basic.py
 
-This creates recipes-bsp/urvf-example-basic-test/ with a BitBake recipe,
-files/ptest/run-ptest, and files/ptest/test_example-basic.py. It also adds
-urvf-example-basic-test to the sanity package group.
+In the recipe, inherit ptest, list the test files in SRC_URI, and install them
+into ${PTEST_PATH} in do_install_ptest(). Add the runtime dependencies required
+by the test. Update run-ptest to execute the new Python script and propagate
+its exit status.
 
-The generated Python test is a placeholder that reports SKIP and exits
-successfully. Implement the test logic, add required runtime dependencies to
-the recipe, and verify it on the intended target. The generator overwrites files
-for an existing test name, so use a new name when scaffolding a test.
+Implement the test logic and add the new package name to RDEPENDS:${PN} in
+recipes-core/packagegroups/packagegroup-edf-ptest-sanity-coverage.bb. Build the
+new recipe in a configured Yocto environment and verify it on the intended
+target using ptest-runner.
 
-Templates are maintained in tools/templates/. Shared runtime helpers and the
-report generator are in recipes-core/ptestlib/files/.
+Shared runtime helpers and the report generator are in
+recipes-core/ptestlib/files/.
 
 Licensing
 =========
@@ -119,5 +124,6 @@ Licensing
 Layer scripts and shared Python utilities use the MIT license in COPYING.MIT.
 Each shell and Python script carries an SPDX identifier, copyright notice, and
 the full MIT license text. MIT recipes checksum a local script's license header;
-the package group checksums the layer's COPYING.MIT file. The generator templates
-include the same headers and checksum metadata for new tests.
+the package group checksums the layer's COPYING.MIT file. When adding a test,
+include the appropriate license headers and update LIC_FILES_CHKSUM to match
+the referenced license text.
